@@ -3,61 +3,83 @@ package controllers
 import (
 	"net/http"
 	"strconv"
-	"shopping-mall-backend/database"
 	"shopping-mall-backend/models"
-
+	"shopping-mall-backend/services"
+	
 	"github.com/gin-gonic/gin"
 )
 
-func GetCategories(c *gin.Context) {
-	var categories []models.Category
-	database.DB.Find(&categories)
+type CategoryController struct {
+	categoryService services.CategoryService
+}
+
+func NewCategoryController(categoryService services.CategoryService) *CategoryController {
+	return &CategoryController{
+		categoryService: categoryService,
+	}
+}
+
+func (cc *CategoryController) GetCategories(c *gin.Context) {
+	categories, err := cc.categoryService.GetAllCategories()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
 	c.JSON(http.StatusOK, gin.H{"data": categories})
 }
 
-func GetCategory(c *gin.Context) {
+func (cc *CategoryController) GetCategory(c *gin.Context) {
 	id, _ := strconv.Atoi(c.Param("id"))
-	var category models.Category
 
-	if err := database.DB.Preload("Products").First(&category, id).Error; err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Category not found"})
+	category, err := cc.categoryService.GetCategoryByID(uint(id))
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
 		return
 	}
 
 	c.JSON(http.StatusOK, gin.H{"data": category})
 }
 
-func CreateCategory(c *gin.Context) {
+func (cc *CategoryController) CreateCategory(c *gin.Context) {
 	var category models.Category
 	if err := c.ShouldBindJSON(&category); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	database.DB.Create(&category)
+	if err := cc.categoryService.CreateCategory(&category); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
 	c.JSON(http.StatusCreated, gin.H{"data": category})
 }
 
-func UpdateCategory(c *gin.Context) {
+func (cc *CategoryController) UpdateCategory(c *gin.Context) {
 	id, _ := strconv.Atoi(c.Param("id"))
+
 	var category models.Category
-
-	if err := database.DB.First(&category, id).Error; err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Category not found"})
-		return
-	}
-
 	if err := c.ShouldBindJSON(&category); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	database.DB.Save(&category)
+	if err := cc.categoryService.UpdateCategory(uint(id), &category); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
 	c.JSON(http.StatusOK, gin.H{"data": category})
 }
 
-func DeleteCategory(c *gin.Context) {
+func (cc *CategoryController) DeleteCategory(c *gin.Context) {
 	id, _ := strconv.Atoi(c.Param("id"))
-	database.DB.Delete(&models.Category{}, id)
+
+	if err := cc.categoryService.DeleteCategory(uint(id)); err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+		return
+	}
+
 	c.JSON(http.StatusOK, gin.H{"message": "Category deleted successfully"})
 }

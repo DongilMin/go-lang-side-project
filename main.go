@@ -28,7 +28,7 @@ func main() {
 	// Repository 초기화
 	categoryRepo := repositories.NewCategoryRepository(database.DB)
 	productRepo := repositories.NewProductRepository(database.DB)
-	userRepo := repositories.NewUserRepository(database.DB)
+	// userRepo는 나중에 사용할 예정
 
 	// Service 초기화
 	categoryService := services.NewCategoryService(categoryRepo)
