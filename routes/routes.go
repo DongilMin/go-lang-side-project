@@ -17,6 +17,8 @@ func SetupRoutes(r *gin.Engine, categoryController *controllers.CategoryControll
 		categories.POST("", categoryController.CreateCategory)
 		categories.PUT("/:id", categoryController.UpdateCategory)
 		categories.DELETE("/:id", categoryController.DeleteCategory)
+		// 카테고리별 상품 조회를 여기에 배치
+		categories.GET("/:id/products", productController.GetProductsByCategory)
 	}
 
 	// Product routes
@@ -28,7 +30,4 @@ func SetupRoutes(r *gin.Engine, categoryController *controllers.CategoryControll
 		products.PUT("/:id", productController.UpdateProduct)
 		products.DELETE("/:id", productController.DeleteProduct)
 	}
-
-	// Product by category route
-	api.GET("/categories/:categoryId/products", productController.GetProductsByCategory)
 }
