@@ -1,8 +1,8 @@
 package models
 
 import (
-    "time"
-    "gorm.io/gorm"
+	"gorm.io/gorm"
+	"time"
 )
 
 type Order struct {

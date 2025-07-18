@@ -1,8 +1,8 @@
 package repositories
 
 import (
-	"shopping-mall-backend/models"
 	"gorm.io/gorm"
+	"shopping-mall-backend/models"
 )
 
 type CategoryRepository interface {

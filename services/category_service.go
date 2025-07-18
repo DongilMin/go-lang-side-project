@@ -41,7 +41,7 @@ func (s *categoryService) CreateCategory(category *models.Category) error {
 	if category.Name == "" {
 		return errors.New("category name is required")
 	}
-	
+
 	return s.categoryRepo.Create(category)
 }
 
@@ -51,12 +51,12 @@ func (s *categoryService) UpdateCategory(id uint, category *models.Category) err
 	if err != nil {
 		return errors.New("category not found")
 	}
-	
+
 	// Validate category data
 	if category.Name == "" {
 		return errors.New("category name is required")
 	}
-	
+
 	// Update the existing category
 	category.ID = id
 	return s.categoryRepo.Update(category)
@@ -68,6 +68,6 @@ func (s *categoryService) DeleteCategory(id uint) error {
 	if err != nil {
 		return errors.New("category not found")
 	}
-	
+
 	return s.categoryRepo.Delete(id)
 }

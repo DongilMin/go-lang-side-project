@@ -45,7 +45,7 @@ func (s *productService) GetProductsByCategory(categoryID uint) ([]models.Produc
 	if err != nil {
 		return nil, errors.New("category not found")
 	}
-	
+
 	return s.productRepo.GetByCategory(categoryID)
 }
 
@@ -55,7 +55,7 @@ func (s *productService) CreateProduct(product *models.Product) error {
 	if err != nil {
 		return errors.New("category not found")
 	}
-	
+
 	// Validate product data
 	if product.Name == "" {
 		return errors.New("product name is required")
@@ -63,7 +63,7 @@ func (s *productService) CreateProduct(product *models.Product) error {
 	if product.Price < 0 {
 		return errors.New("product price cannot be negative")
 	}
-	
+
 	return s.productRepo.Create(product)
 }
 
@@ -73,7 +73,7 @@ func (s *productService) UpdateProduct(id uint, product *models.Product) error {
 	if err != nil {
 		return errors.New("product not found")
 	}
-	
+
 	// Validate category exists if changing category
 	if product.CategoryID != existingProduct.CategoryID {
 		_, err := s.categoryRepo.GetByID(product.CategoryID)
@@ -81,7 +81,7 @@ func (s *productService) UpdateProduct(id uint, product *models.Product) error {
 			return errors.New("category not found")
 		}
 	}
-	
+
 	// Update the existing product
 	product.ID = id
 	return s.productRepo.Update(product)
@@ -93,6 +93,6 @@ func (s *productService) DeleteProduct(id uint) error {
 	if err != nil {
 		return errors.New("product not found")
 	}
-	
+
 	return s.productRepo.Delete(id)
 }
